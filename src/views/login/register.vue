@@ -1,8 +1,8 @@
 <template>
   <div class="login-container">
     <el-form
-      ref="loginForm"
-      :model="loginForm"
+      ref="registerForm"
+      :model="registerForm"
       :rules="loginRules"
       class="login-form"
       auto-complete="on"
@@ -10,9 +10,8 @@
     >
       <!-- 标题 -->
       <div class="title-container">
-        <h3 class="title">在线考试系统-登录界面</h3>
+        <h3 class="title">在线考试系统-注册界面</h3>
       </div>
-
       <!-- 用户名 -->
       <el-form-item prop="username">
         <span class="svg-container">
@@ -20,37 +19,41 @@
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
-          class="yuan"
+          v-model="registerForm.username"
           placeholder="请输入用户名"
           name="username"
           type="text"
           tabindex="1"
-          auto-complete="on"
         />
       </el-form-item>
-
       <!-- 密码 -->
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
         <el-input
-          :key="passwordType"
           ref="password"
-          v-model="loginForm.password"
-          class="yuan"
-          :type="passwordType"
+          v-model="registerForm.password"
+          type="password"
           placeholder="请输入密码"
           name="password"
           tabindex="2"
-          auto-complete="on"
         />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon
-            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
-          />
+      </el-form-item>
+
+      <!-- 确认密码 -->
+      <el-form-item prop="repeat">
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
         </span>
+        <el-input
+          ref="repeat"
+          v-model="registerForm.repeat"
+          type="password"
+          placeholder="请确认密码"
+          name="repeat"
+          tabindex="3"
+        />
       </el-form-item>
 
       <!-- 验证码 -->
@@ -62,14 +65,13 @@
             </span>
             <el-input
               ref="code"
-              v-model="loginForm.code"
+              v-model="registerForm.code"
               class="yuan"
               placeholder="请输入验证码"
               name="code"
               type="text"
               tabindex="3"
-              auto-complete="off"
-              @keyup.enter.native="handleLogin"
+              @keyup.enter.native="handleRight"
             />
           </el-form-item>
         </el-col>
@@ -84,114 +86,100 @@
           :loading="loading"
           type="primary"
           style="width: 48%; float: left"
-          @click.native.prevent="handleLogin"
-        >登录</el-button>
+          @click.native.prevent="handleRight"
+        >确认</el-button>
         <el-button
           :loading="loading"
           type="success"
           style="width: 48%; float: right"
-          @click.native.prevent="handleRegister"
-        >注册</el-button>
-      </div>
-
-      <!-- 提示 -->
-      <div>
-        <div class="tips">
-          <span style="margin-right: 20px">管理员 username: admin</span>
-          <span> password: admin</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right: 20px">学生 username: wangpeng</span>
-          <span> password: 123456</span>
-        </div>
+          @click.native.prevent="handleBack"
+        >返回登录</el-button>
       </div>
     </el-form>
   </div>
 </template>
 
 <script>
+import { register } from '@/api/system/user'
 import {
   getCode
 } from '@/api/system/user'
 export default {
-  name: 'Login',
+  name: 'Register',
   data() {
+    const validateRepeat = (rule, value, callback) => {
+      if (value !== this.registerForm.password) {
+        callback(new Error('两次输入的密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
       url: null,
-      loginForm: {
-        username: null,
-        password: null,
-        key: null,
-        code: null
+      registerForm: {
+        username: '',
+        password: '',
+        repeat: '',
+        key: ''
       },
       loginRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        repeat: [
+          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          { trigger: 'blur', validator: validateRepeat }
         ],
-        code: [
-          { required: true, message: '请输入验证码', trigger: 'blur' }
-        ]
+        code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
       },
-      loading: false,
-      passwordType: 'password',
-      redirect: undefined
+      loading: false
     }
   },
   created() {
     this.handleCheckCode()
   },
-  mounted() {
-    this.loginForm.username = this.$route.query.username
-    this.loginForm.password = this.$route.query.password
-  },
   methods: {
-    // 显示密码
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    },
     // 切换验证码
     handleCheckCode() {
       getCode().then((res) => {
-        this.loginForm.key = res.data.key
+        this.registerForm.key = res.data.key
         this.url = res.data.img
       })
     },
-    // 登录
-    handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
+    // 确定
+    handleRight() {
+      this.$refs.registerForm.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: '/' }) // 无脑进首页
+          register(this.registerForm).then((res) => {
+            if (res.status === 200) { // 注册成功
+              this.$message.success(res.message)
+              // 跳回登录界面
+              this.$router.push({
+                path: '/login',
+                query: {
+                  username: this.registerForm.username,
+                  password: this.registerForm.password
+                }
+              })
               this.loading = false
-            })
-            .catch((message) => {
-              this.$message.error(message)
+            } else { // 注册失败
+              this.$message.error(res.message)
               // 刷新验证码
               this.handleCheckCode()
               this.loading = false
-            })
+            }
+          })
         } else {
           console.log('不允许提交!')
           return false
         }
       })
     },
-    // 注册
-    handleRegister() {
-      this.$router.push({ path: '/register' }) // 进注册页面
+    // 返回登录界面
+    handleBack() {
+      this.$router.push('/login')
     }
   }
 }
@@ -213,32 +201,10 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
-  .el-input.yuan {
-    display: inline-block;
-    height: 47px;
-    width: 85%;
-
-    input {
-      background: transparent;
-      border: 0px;
-      -webkit-appearance: none;
-      border-radius: 0px;
-      padding: 12px 5px 12px 15px;
-      color: $light_gray;
-      height: 47px;
-      caret-color: $cursor;
-
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
-    }
-  }
-
   .el-input {
     display: inline-block;
     height: 47px;
-    width: 100%;
+    width: 85%;
 
     input {
       background: transparent;
@@ -262,6 +228,9 @@ $cursor: #fff;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+  }
+  .el-icon-arrow-up:before {
+    content: '';
   }
 }
 </style>

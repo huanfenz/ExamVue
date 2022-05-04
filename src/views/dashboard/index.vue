@@ -1,7 +1,9 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
-    <div class="dashboard-text">roles: <span v-for="role in roles" :key="role">{{ role }}</span></div>
+    <el-row style="line-height: 30px">
+      <el-row :span="24">欢迎使用 在线考试系统</el-row>
+      <el-row :span="24" style="font-size: 14px; color: #666">系统版本：1.0.0</el-row>
+    </el-row>
   </div>
 </template>
 
@@ -19,14 +21,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.dashboard {
-  &-container {
-    margin: 30px;
-  }
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
-  }
+<style scoped>
+.dashboard-container{
+  margin: 20px;
+  font-size: 24px;
 }
 </style>

@@ -38,6 +38,12 @@ export const constantRoutes = [
   },
 
   {
+    path: '/register',
+    component: () => import('@/views/login/register'),
+    hidden: true
+  },
+
+  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
@@ -51,43 +57,8 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'dashboard' }
     }]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
   }
 ]
 
@@ -96,75 +67,185 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  // 用户管理
   {
-    path: '/nested',
+    path: '/user-manager',
     component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
+    redirect: '/user-manager/user',
+    name: 'UserManager',
     meta: {
-      title: 'Nested',
-      icon: 'nested'
+      title: '用户管理',
+      icon: 'nested',
+      roles: ['admin', 'student']
     },
     children: [
       {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        path: 'persion-info',
+        name: 'persionInfo',
+        component: () => import('@/views/user-manager/person-info/index'),
+        meta: {
+          title: '个人信息',
+          icon: 'form',
+          roles: ['admin', 'student'],
+          noCache: true
+        }
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/user-manager/user/list'),
+        meta: {
+          title: '用户管理',
+          icon: 'form',
+          roles: ['admin'],
+          noCache: true
+        }
       }
     ]
   },
-
+  // 考试管理
   {
-    path: 'external-link',
+    path: '/exam-manager',
     component: Layout,
+    redirect: '/exam-manager/repo',
+    name: 'ExamManager',
+    meta: {
+      title: '考试管理',
+      icon: 'nested',
+      roles: ['admin']
+    },
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'repo',
+        name: 'Repo',
+        component: () => import('@/views/exam-manager/repo/list'), // Parent router-view
+        meta: {
+          title: '题库管理',
+          icon: 'form',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        path: 'question',
+        name: 'Question',
+        component: () => import('@/views/exam-manager/question/list'), // Parent router-view
+        meta: {
+          title: '题目管理',
+          icon: 'form',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        path: 'paper',
+        name: 'Paper',
+        component: () => import('@/views/exam-manager/paper/list'), // Parent router-view
+        meta: {
+          title: '试卷管理',
+          icon: 'form',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        path: 'paperForm',
+        name: 'PaperForm',
+        component: () => import('@/views/exam-manager/paper/paperForm'), // Parent router-view
+        meta: {
+          title: '试卷表单',
+          roles: ['admin'],
+          noCache: true
+        },
+        hidden: true
+      },
+      {
+        path: 'exam',
+        name: 'Exam',
+        component: () => import('@/views/exam-manager/exam/list'), // Parent router-view
+        meta: {
+          title: '考试管理',
+          icon: 'form',
+          roles: ['admin'],
+          noCache: true
+        }
       }
     ]
   },
-
+  // 在线考试
+  {
+    path: '/online-exam',
+    component: Layout,
+    redirect: '/online-exam/exam',
+    name: 'OnlineExamDir',
+    meta: {
+      title: '在线考试',
+      icon: 'nested',
+      roles: ['admin', 'student']
+    },
+    children: [
+      {
+        path: 'exam-list',
+        name: 'ExamList',
+        component: () => import('@/views/online-exam/online-exam/list'), // Parent router-view
+        meta: {
+          title: '考试列表',
+          icon: 'form',
+          roles: ['admin', 'student'],
+          noCache: true
+        }
+      },
+      {
+        path: 'exam-record',
+        name: 'ExamRecord',
+        component: () => import('@/views/online-exam/exam-grade/record'), // Parent router-view
+        meta: {
+          title: '考试记录',
+          icon: 'form',
+          roles: ['admin', 'student'],
+          noCache: true
+        }
+      },
+      // 考试信息
+      {
+        path: 'info',
+        name: 'ExamInfo',
+        component: () => import('@/views/online-exam/online-exam/info'),
+        meta: {
+          title: '考试信息',
+          icon: 'form',
+          roles: ['admin', 'student'],
+          noCache: true
+        },
+        hidden: true
+      },
+      // 考试详细情况
+      {
+        path: 'detail',
+        name: 'ExamDetail',
+        component: () => import('@/views/online-exam/online-exam/detail'),
+        meta: {
+          title: '考试详情',
+          icon: 'form',
+          roles: ['admin', 'student'],
+          noCache: true
+        },
+        hidden: true
+      }
+    ]
+  },
+  // 正在考试
+  {
+    path: 'online-exam/run',
+    name: 'RunExam',
+    component: () => import('@/views/online-exam/online-exam/run'),
+    meta: {
+      title: '开始考试',
+      roles: ['admin', 'student'],
+      noCache: true
+    },
+    hidden: true
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
