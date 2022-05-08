@@ -299,7 +299,7 @@ export default {
         updateRepo(this.form).then((res) => {
           if (res.status === 200) {
             this.$message.success('更新记录成功')
-            this.handleCurrentChange(this.queryParam.page)
+            this.queryPage()
           } else {
             this.$message.error('更新记录失败')
           }

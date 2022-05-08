@@ -459,7 +459,7 @@ export default {
     },
 
     downloadImport() {
-      window.open('http://localhost:8093/exam/题目导入模板.xlsx')
+      window.open('https://wangpeng-imgsubmit.oss-cn-hangzhou.aliyuncs.com/Exam/%E9%A2%98%E7%9B%AE%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx')
     },
 
     handleUploadSuccess() {

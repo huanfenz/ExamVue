@@ -65,8 +65,8 @@
             </el-form-item>
 
             <el-form-item label="身份" prop="role">
-              <el-radio v-model="form.role" label="管理员">管理员</el-radio>
-              <el-radio v-model="form.role" label="学生">学生</el-radio>
+              <el-radio v-model="form.role" label="管理员" :disabled="form.id === 1">管理员</el-radio>
+              <el-radio v-model="form.role" label="学生" :disabled="form.id === 1">学生</el-radio>
             </el-form-item>
           </el-form>
         </el-col>
@@ -107,7 +107,7 @@
 
       <el-table-column label="头像" align="center">
         <template slot-scope="scope">
-          <el-avatar size="large" :src="scope.row.profile">
+          <el-avatar :key="scope.row.profile" size="large" :src="scope.row.profile">
             <img src="http://wangpeng-imgsubmit.oss-cn-hangzhou.aliyuncs.com/img/202203231718487.png">
           </el-avatar>
         </template>
@@ -323,7 +323,7 @@ export default {
           updateUser(this.form).then((res) => {
             if (res.status === 200) {
               this.$message.success('更新记录成功')
-              this.handleCurrentChange(this.queryParam.page)
+              this.queryPage()
               this.dialogFormVisible = false // 关闭对话框
             } else {
               if (res.status === 501) this.$message.error(res.message)
