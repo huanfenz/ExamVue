@@ -140,7 +140,7 @@
         <el-upload
           class="upload-demo"
           drag
-          action="http://localhost:8093/exam/system/upload/uploadExcel"
+          action="http://localhost:8093/system/upload/uploadExcel"
           multiple
           align="center"
           style="margin-top: 30px"

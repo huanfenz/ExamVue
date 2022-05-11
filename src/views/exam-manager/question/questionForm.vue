@@ -78,7 +78,7 @@
         <el-col :span="2">
           <el-upload
             class="upload-demo"
-            action="http://localhost:8093/exam/system/upload/uploadImage"
+            action="http://localhost:8093/system/upload/uploadImage"
             multiple
             :limit="1"
             :file-list="imageList"
@@ -101,7 +101,7 @@
         <el-col :span="2">
           <el-upload
             class="upload-demo"
-            action="http://localhost:8093/exam/system/upload/uploadImage"
+            action="http://localhost:8093/system/upload/uploadImage"
             multiple
             :limit="1"
             :file-list="analysisImageList"
@@ -124,7 +124,7 @@
         <el-col :span="2">
           <el-upload
             class="upload-demo"
-            action="http://localhost:8093/exam/system/upload/uploadImage"
+            action="http://localhost:8093/system/upload/uploadImage"
             multiple
             :limit="1"
             :file-list="answerImageList"
@@ -199,7 +199,7 @@
         <template slot-scope="scope">
           <el-upload
             class="upload-demo"
-            action="http://localhost:8093/exam/system/upload/uploadImage"
+            action="http://localhost:8093/system/upload/uploadImage"
             multiple
             :limit="1"
             :file-list="optionImageList[scope.$index]"

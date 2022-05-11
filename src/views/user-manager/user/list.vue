@@ -76,7 +76,7 @@
             <!--上传图片-->
             <el-upload
               class="avatar-uploader"
-              action="http://localhost:8093/exam/system/upload/uploadImage"
+              action="http://localhost:8093/system/upload/uploadImage"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
